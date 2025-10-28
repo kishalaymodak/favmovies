@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String
+  avatar        String?
+  googleId      String?  @unique
+  githubId      String?  @unique
+  provider      String   // "google" or "github"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  media         Media[]
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  title     String
+  type      MediaType
+  director  String
+  budget    String
+  location  String
+  duration  String
+  yearTime  String
+  poster    String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum MediaType {
+  MOVIE
+  TV_SHOW
+}
